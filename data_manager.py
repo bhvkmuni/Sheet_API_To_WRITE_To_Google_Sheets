@@ -16,7 +16,11 @@ class DataManager:
             "Authorization": f"Bearer {SHEETS_API}",
             "Content-Type": "application/json"
         }
-    def get_data(self, sheets_data):
+
+        self.destination_data = {}
+
+
+    def get_data(self):
         get_response = requests.get(url=self.get_endpoint, headers=self.sheets_headers)
         get_json_data = get_response.json()
         return get_json_data
@@ -27,3 +31,16 @@ class DataManager:
                                     json=put_data)
         print(put_response.text)
 
+    def update_destination_codes(self):
+        for city in self.destination_data["sheet1"]:
+            new_data = {
+                "sheet1": {
+                    "iata": city["iata"]
+                }
+            }
+            response = requests.put(
+                url=f"{self.put_endpoint}/{city["id"]}",
+                headers=self.sheets_headers,
+                json=new_data
+            )
+            print(response.text)
